@@ -2,7 +2,7 @@ from machine import Pin
 import time
 from temp_interna import print_temp_interna
 
-G_TIME = .01
+G_TIME = .05
 
 leds = [
     Pin(18,Pin.OUT),
@@ -85,18 +85,19 @@ def leds_display_int_as_binary(leds_list, integer):
 def test_leds(leds_list):
     all_off(leds_list)
     print("Testing leds...")
-    for _ in range(5): leds_simultaneous_blink_dance(leds)
-    for _ in range(5): leds_alternate_dance(leds)
-    for _ in range(5): leds_sequence_dance(leds)
-    for _ in range(5): leds_sequence_blink_dance(leds)
-    for _ in range(5): leds_ping_pong_dance(leds)
+    for _ in range(3): leds_simultaneous_blink_dance(leds)
+    for _ in range(3): leds_alternate_dance(leds)
+    for _ in range(3): leds_sequence_dance(leds)
+    for _ in range(3): leds_sequence_blink_dance(leds)
+    for _ in range(3): leds_ping_pong_dance(leds)
     for num in range(255):
         leds_display_int_as_binary(leds_list, num)
-        time.sleep(G_TIME*3)
-    for _ in range(5): leds_simultaneous_blink_dance(leds)
+        time.sleep(G_TIME/2)
+    for _ in range(3): leds_simultaneous_blink_dance(leds)
     
     all_off(leds_list)
 
 
 if __name__ == "__main__":
-    test_leds(leds)
+    while True:
+        test_leds(leds)
