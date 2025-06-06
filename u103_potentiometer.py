@@ -1,8 +1,6 @@
 from machine import ADC, Pin
 import time
 
-pot = ADC(26)  # GP26 = ADC0
-
 class Potentiometer_U103:
     def __init__(self, adc, base_voltage):
         self.pot = adc
@@ -16,7 +14,7 @@ class Potentiometer_U103:
     
 
 if __name__ == "__main__":
-    pot = Potentiometer_U103(ADC(26), 3.3)    
+    pot = Potentiometer_U103(ADC(26), 3.3)     # GP26 = ADC0
     while True:
         val, voltage = pot.read()
         print(f"\rRaw: {val}  |  Voltage: {voltage:.2f} V", end="           ")    
