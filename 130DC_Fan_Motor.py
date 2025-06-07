@@ -10,8 +10,10 @@ INA = PWM(15)  # Motor forward pin
 INB = PWM(14)  # Motor backward pin
 
 # Set PWM frequency
-INA.freq(500)
-INB.freq(500)
+INA.freq(1000)
+INB.freq(1000)
+
+
 
 def motor_forward(frac_speed):
     """Rotate motor clockwise at specified speed (0-65535)."""

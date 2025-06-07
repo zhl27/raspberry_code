@@ -1,22 +1,30 @@
 from machine import Pin
 import time
+import math
 
 class LedArray:
     
     GLOBAL_DEFAULT_WAIT_TIME = 0.5
     
-    def __init__(self, ordered_list_of_leds, wait_time=None):
+    def __init__(self, ordered_list_of_leds, logging=False, wait_time=None):
+        self.logging = logging
         if wait_time is None:
-            print(f"{__class__.__name__}: wait_time is None, defaulting to {LedArray.GLOBAL_DEFAULT_WAIT_TIME}")
+            self.log(f"wait_time is None, defaulting to {LedArray.GLOBAL_DEFAULT_WAIT_TIME}")
             self.wait_time = LedArray.GLOBAL_DEFAULT_WAIT_TIME
         else:
             self.wait_time = wait_time
         self.leds_list = ordered_list_of_leds
         self.len = len(self.leds_list)
-
+        
+        self.log(f"Succesfully created: {self}")
+    
+    def log(self, msg):
+        if self.logging:
+            print(f"{__class__.__name__}#{id(self)}: {msg}")
+    
     def __getitem__(self, key):
         #print(f"Recibido: {key} ({type(key)})")
-        return LedArray(list(self.leds_list[key]), self.wait_time)
+        return LedArray(list(self.leds_list[key]), self.logging, self.wait_time)
 
     def __len__(self):
         return self.len
@@ -79,19 +87,27 @@ class LedArray:
             time.sleep(self.wait_time)
             self.off(index)
             time.sleep(self.wait_time/2)
-        for index in range(0,self.len,-1):
+        for index in range(self.len-2,0,-1):
             self.on(index)
             time.sleep(self.wait_time)
             self.off(index)
             time.sleep(self.wait_time/2)
 
-    def display_int_as_binary(self, integer):
+    def display_int_as_binary(self, integer: int):
         self.all_off()
         int_bin = bin(int(integer))[2:]
         for index, bit in enumerate(reversed(int_bin)):
             #print(index, bit)
             self.leds_list[index].value(int(bit))
-
+    
+    def display_fraction_as_levels(self, fraction: float):
+        self.all_off()
+        level = (self.len) * fraction
+        level = int(level) + (1 if level - int(level) >= 0.5 else 0) # let x be an integer: if (x+0.5) then round up, if (x+0.4) then round down
+        print(level)
+        self[0:level].all_on()
+        
+    
     def test_leds(self):
         self.all_off()
         print("Testing leds...")
@@ -100,6 +116,11 @@ class LedArray:
         for _ in range(3): self.sequence_dance()
         for _ in range(3): self.sequence_blink_dance()
         for _ in range(3): self.ping_pong_dance()
+        for num in range(self.len+1):
+            frac = num/self.len
+            print(frac)
+            self.display_fraction_as_levels(frac)
+            time.sleep(self.wait_time)
         for number in range(16):
             self.display_int_as_binary(number)
             time.sleep(self.wait_time)
@@ -107,16 +128,16 @@ class LedArray:
         self.all_off()
 
 if __name__ == "__main__":
-    
+
     led_arr = LedArray([
         Pin(28,Pin.OUT),
         Pin(27,Pin.OUT),
         Pin(22,Pin.OUT),
         Pin(19,Pin.OUT),
         Pin(18,Pin.OUT),
-    ])
+    ], logging=True, wait_time=.5)
     
-    print(led_arr)
+    #print(led_arr)
     
     led_arr.test_leds()
     
